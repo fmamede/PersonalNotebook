@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
+using System.Diagnostics;
 
 static class Database
 {
@@ -36,15 +37,13 @@ static class Database
 
     public static void DatabaseDelete(Evento e)
     {
-        using (SqliteConnection dbConnection = Database.GetConnection())
+        using (SqliteConnection dbConnection = GetConnection())
         {
             dbConnection.Open();
-            using (SqliteCommand cmd = dbConnection.CreateCommand())
-            {
-                cmd.CommandText = @"DELETE FROM Eventos WHERE id = $id;";
-                cmd.Parameters.AddWithValue("$id", e.id);
-                cmd.ExecuteNonQuery();
-            }
+            using SqliteCommand cmd = dbConnection.CreateCommand();
+            cmd.CommandText = @"DELETE FROM Eventos WHERE id = $id;";
+            cmd.Parameters.AddWithValue("$id", e.id);
+            cmd.ExecuteNonQuery();
         }
     }
 
@@ -60,8 +59,10 @@ static class Database
                 cmd.Parameters.AddWithValue("$Data", data.ToLongDateString());
                 cmd.ExecuteNonQuery();
                 cmd.CommandText = @"SELECT last_insert_rowid();";
-                int lastId = cmd.ExecuteNonQuery();
-                Evento evento = new Evento(lastId, data, descricao);
+                object lastId = cmd.ExecuteScalar();
+                Int32.TryParse(lastId.ToString(), out int lastIdInt);
+                Debug.WriteLine(lastId);
+                Evento evento = new Evento(lastIdInt, data, descricao);
                 return evento;
             }
         }

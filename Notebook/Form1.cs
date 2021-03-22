@@ -27,17 +27,28 @@ namespace Agenda
 
         private void removeButton_Click(object sender, EventArgs e)
         {
-            if(listBox.SelectedItem.ToString() != "")
+            try
             {
-                Evento evento = NotebookInterface.eventos.Find(x =>
+                if (listBox.SelectedItem.ToString() != "" || listBox.SelectedItem != null)
                 {
-                    if (x.Data == monthCalendar1.SelectionStart && x.Descricao == listBox.SelectedItem.ToString()) return true;
-                    else return false;
-                });
-                NotebookInterface.eventos.Remove(evento);
-                Database.DatabaseDelete(evento);
-                UpdateListBox();
-            } 
+                    Evento evento = NotebookInterface.eventos.Find(x =>
+                    {
+                        if (x.Data == monthCalendar1.SelectionStart && x.Descricao == listBox.SelectedItem.ToString()) return true;
+                        else return false;
+                    });
+                    Console.WriteLine(evento.Descricao);
+                    if (evento != null)
+                    {
+                        NotebookInterface.eventos.Remove(evento);
+                        Database.DatabaseDelete(evento);
+                    }
+                    UpdateListBox();
+                }
+            }
+            catch (NullReferenceException)
+            {
+
+            }
         }
 
         private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)

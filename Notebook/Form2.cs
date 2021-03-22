@@ -22,12 +22,19 @@ namespace Agenda
 
         private void addButtonConfirm_Click(object sender, EventArgs e)
         {
-            if(confirmTextbox.Text != "")
+            try
             {
-                Evento eve = Database.DatabaseCreate(confirmTextbox.Text, dt);
-                NotebookInterface.eventos.Add(eve);
-                this.Close();
-                this.reference.UpdateListBox();
+                if (confirmTextbox.Text != "")
+                {
+                    Evento eve = Database.DatabaseCreate(confirmTextbox.Text, dt);
+                    NotebookInterface.eventos.Add(eve);
+                    this.Close();
+                    this.reference.UpdateListBox();
+                }
+            }
+            catch
+            {
+
             }
         }
     }
